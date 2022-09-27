@@ -19,12 +19,5 @@ const ReviewSchema = new mongoose.Schema(
     }
 );
 
-// attachments
-UserSchema.methods.generateJwtToken = function () { };
 
-//helper functions
-UserSchema.statics.findByEmailAndPhone = async () => { };
-
-UserSchema.statics.findByEmailAndPassword = async () => { };
-
-export const ReviewModel = mongoose.Model('review', ReviewSchema);
+export const ReviewModel = mongoose.model('review', ReviewSchema);
