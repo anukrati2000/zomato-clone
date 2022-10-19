@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { RestaurantModel } from '../../database/allModels';
+import { ValidateSearchString } from '../../validation/restaurant.validation';
 
 const Router = express.Router();
 
@@ -12,6 +13,20 @@ const Router = express.Router();
  * Method       POST
 */
 //Homework
+Router.post('/', async (req, res) => {
+    try {
+        const { restaurantDetails } = req.body;
+        const newRestaurant = await RestaurantModel.create({ ...restaurantDetails });
+
+        if (!newRestaurant) {
+            return res.status(404).json(newRestaurant);
+        }
+
+        return res.json({ newRestaurant });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
 
 /**
  * Route        /
@@ -22,10 +37,12 @@ const Router = express.Router();
 */
 Router.get('/', async (req, res) => {
     try {
-        const city = req.query;
+        // http://localhost:4000/restaurant/?city=ncr
+        const { city } = req.query;
+        await ValidateRestaurantCity(req.query);
         const restaurants = await RestaurantModel.find({ city });
         if (restaurants.length === 0) {
-            return res.json({ error: "No restaurant found in this city." });
+            return res.status(404).json({ error: "No restaurant found in this city." });
         }
         return res.json({ restaurants });
     } catch (error) {
@@ -43,10 +60,11 @@ Router.get('/', async (req, res) => {
 Router.get('/:_id', async (req, res) => {
     try {
         const { _id } = req.params;
+        await ValidityRequiredString(_id);
         const restaurant = await RestaurantModel.findById(_id);
 
         if (!restaurant) {
-            return res.status(400).json({ error: "Restaurant not found" });
+            return res.status(404).json({ error: "Restaurant not found" });
         }
 
         return res.json({ restaurant });
@@ -65,6 +83,7 @@ Router.get('/:_id', async (req, res) => {
 Router.get('/search/:searchString', async (req, res) => {
     try {
         const { searchString } = req.params;
+        await ValidateSearchString(req.params);
         const restaurants = await RestaurantModel.find({
             name: { $reqex: searchString, $options: "i" },
         });
