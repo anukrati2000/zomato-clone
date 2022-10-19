@@ -31,6 +31,7 @@ Router.get('/', passport.authenticate('jwt', { session: false }), async (req, re
 Router.get('/:_id', async (req, res) => {
     try {
         const { _id } = req.params;
+        await validateId(_id);
 
         const getUser = await UserModel.findById(_id);
         const { fullName } = getUser;
@@ -57,7 +58,10 @@ Router.put('/update/:_id',
     async (req, res) => {
         try {
             const { _id } = req.params;
+            await validateId(_id);
             const { userData } = req.body;
+
+            // Task: Validate User Data
 
             userData.password = undefined;
 

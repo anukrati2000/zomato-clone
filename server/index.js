@@ -16,6 +16,7 @@ import User from './api/user';
 import Menu from './api/menu';
 import Order from './api/order';
 import Review from './api/review';
+import Image from './api/image';
 
 dotenv.config();
 
@@ -43,6 +44,8 @@ zomato.use('/user', User);
 zomato.use('/menu', Menu);
 zomato.use('/order', Order);
 zomato.use('/review', Review);
+zomato.use('/image', Image);
+
 
 zomato.listen(4000, () => {
     ConnectDB()
